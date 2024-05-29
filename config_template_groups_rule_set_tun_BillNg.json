@@ -1,6 +1,6 @@
 {
   "log": {
-    "level": "debug",
+    "level": "info",
     "timestamp": true
   },
   "experimental": {
@@ -36,14 +36,6 @@
     ],
     "rules": [
       {
-        "domain": [
-          "ghproxy.com",
-          "cdn.jsdelivr.net",
-          "testingcf.jsdelivr.net"
-        ],
-        "server": "localDns"
-      },
-      {
         "rule_set": "geosite-category-ads-all",
         "server": "block"
       },
@@ -78,7 +70,7 @@
       "inet4_address": "172.19.0.1/30",
       "mtu": 9000,
       "auto_route": true,
-      "strict_route": true,
+      "strict_route": false,
       "sniff": true,
       "endpoint_independent_nat": false,
       "stack": "system",
@@ -248,7 +240,7 @@
       "filter":[
         {"action":"include","keywords":["US|us|美国|美|United States"]}
       ],
-      "default": "🇺🇸 Kadath - US"
+      "default": "🇺🇸 美国1-hy2  协议"
     },
     {
       "tag":"Pandora",
@@ -260,7 +252,7 @@
       "filter":[
         {"action":"include","keywords":["US|us|美国|美|United States"]}
       ],
-      "default": "🇺🇸 Kadath - US"
+      "default": "🇺🇸 美国1-hy2  协议"
     },
     {
       "tag":"TikTok",
@@ -272,7 +264,7 @@
       "filter":[
         {"action":"include","keywords":["US|us|美国|美|United States"]}
       ],
-      "default": "🇺🇸 Kadath - US"
+      "default": "🇺🇸 美国1-hy2  协议"
     },
     {
       "tag":"OpenAI",
@@ -284,7 +276,7 @@
       "filter":[
         {"action":"include","keywords":["US|us|美国|美|United States|UK|uk|GB|gb|英国|英|United Kingdom"]}
       ],
-      "default": "🇺🇸 Kadath - US"
+      "default": "🇺🇸 美国1-hy2  协议"
     },
     {
       "tag":"Gemini",
@@ -296,7 +288,7 @@
       "filter":[
         {"action":"include","keywords":["US|us|美国|美|United States|UK|uk|GB|gb|英国|英|United Kingdom"]}
       ],
-      "default": "🇺🇸 Kadath - US"
+      "default": "🇺🇸 美国1-hy2  协议"
     },
     {
       "tag":"Claude",
@@ -308,7 +300,7 @@
       "filter":[
         {"action":"include","keywords":["US|us|美国|美|United States|UK|uk|GB|gb|英国|英|United Kingdom"]}
       ],
-      "default": "🇺🇸 Kadath - US"
+      "default": "🇺🇸 美国1-hy2  协议"
     },
     {
       "tag":"Copilot",
@@ -320,7 +312,7 @@
       "filter":[
         {"action":"include","keywords":["US|us|美国|美|United States|UK|uk|GB|gb|英国|英|United Kingdom"]}
       ],
-      "default": "🇺🇸 Kadath - US"
+      "default": "🇺🇸 美国1-hy2  协议"
     },    
     {
       "tag":"!China",
@@ -333,6 +325,15 @@
     },
     {
       "tag":"China",
+      "type":"selector",
+      "outbounds":[
+        "direct",
+        "proxy"
+      ],
+      "default": "direct"
+    },
+    {
+      "tag":"Hong Kong",
       "type":"selector",
       "outbounds":[
         "direct",
@@ -380,13 +381,17 @@
     "final": "proxy",
     "rules": [
       {
-        "protocol": "dns",
+        "type": "logical",
+        "mode": "or",
+        "rules":[
+          {
+            "port":53
+          },
+          {
+            "protocol": "dns"
+          }
+        ],
         "outbound": "dns-out"
-      },
-      {
-        "network": "udp",
-        "port": 443,
-        "outbound": "block"
       },
       {
         "rule_set": "geosite-category-ads-all",
@@ -557,6 +562,7 @@
       },
       {
         "rule_set": "geosite-openai",
+        "domain": "chatgpt.com",
         "outbound": "OpenAI"
       },
       {
@@ -598,12 +604,12 @@
         "outbound": "direct"
       },
       {
-        "rule_set": "geoip-cn",
+        "rule_set": ["geoip-cn", "geosite-cn"],
         "outbound": "China"
       },
       {
-        "rule_set": "geosite-cn",
-        "outbound": "China"
+        "rule_set": "geoip-hk",
+        "outbound": "Hong Kong"
       }
     ],
     "rule_set": [
@@ -661,6 +667,13 @@
         "type": "remote",
         "format": "binary",
         "url": "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geoip/cn.srs",
+        "download_detour": "direct"
+      },
+      {
+        "tag": "geoip-hk",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geoip/hk.srs",
         "download_detour": "direct"
       },
       {
